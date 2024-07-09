@@ -1,0 +1,14 @@
+spring:
+  application:
+  name: demo-notification
+
+active-mq:
+  broker-url: tcp://localhost:61616
+  queue: demo.queue
+
+server:
+  port: 8082
+
+email:
+  sender: ${SENDER:noreply.demo.microservice@gmail.com}
+  password: "hibi ivpl tjfy ngmm"
