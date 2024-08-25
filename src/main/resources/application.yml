@@ -5,6 +5,7 @@ spring:
 active-mq:
   broker-url: tcp://localhost:61616
   queue: demo.queue
+  recoveryQueue: notification.recovery-queue
 
 server:
   port: 8082
