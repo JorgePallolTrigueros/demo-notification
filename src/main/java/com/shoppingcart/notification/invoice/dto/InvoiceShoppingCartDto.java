@@ -15,7 +15,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class InvoiceShoppingCart {
+public class InvoiceShoppingCartDto {
 
   private String id;
   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
@@ -27,7 +27,7 @@ public class InvoiceShoppingCart {
   private BigDecimal totalTax;
   private String taxDescription;
   private BigDecimal tax;
-  private List<Product> products;
+  private List<ProductDto> productDtos;
 
 }
 

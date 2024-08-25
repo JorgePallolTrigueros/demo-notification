@@ -2,8 +2,8 @@ package com.shoppingcart.notification.invoice.listener;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.shoppingcart.notification.invoice.dto.GeneratedFile;
-import com.shoppingcart.notification.invoice.dto.InvoiceShoppingCart;
+import com.shoppingcart.notification.invoice.dto.GeneratedFileDto;
+import com.shoppingcart.notification.invoice.dto.InvoiceShoppingCartDto;
 import com.shoppingcart.notification.invoice.generator.InvoiceGenerator;
 import com.shoppingcart.notification.mail.MailSenderService;
 import com.shoppingcart.notification.util.EmailUtil;
@@ -39,20 +39,20 @@ public class InvoiceShoppingCartListener {
 
         String type = jsonMessage.getStringProperty(TYPE);
 
-        if(!type.contains(InvoiceShoppingCart.class.getSimpleName())){
-            log.warn("Type request: {} is not possible convert to: {}",type,InvoiceShoppingCart.class.getSimpleName());
+        if(!type.contains(InvoiceShoppingCartDto.class.getSimpleName())){
+            log.warn("Type request: {} is not possible convert to: {}",type, InvoiceShoppingCartDto.class.getSimpleName());
             return;
         }
 
         String request = jsonMessage.getBody(String.class);
 
-        InvoiceShoppingCart invoiceShoppingCart = objectMapper.readValue(request, InvoiceShoppingCart.class);
+        InvoiceShoppingCartDto invoiceShoppingCartDto = objectMapper.readValue(request, InvoiceShoppingCartDto.class);
 
-        log.info("Class: {}",invoiceShoppingCart);
+        log.info("Class: {}", invoiceShoppingCartDto);
 
-        final GeneratedFile pdfFile = invoicePdfGenerator.generate(invoiceShoppingCart);
+        final GeneratedFileDto pdfFile = invoicePdfGenerator.generate(invoiceShoppingCartDto);
 
-        mailSenderService.sendHtmlMailAsync("noreply.demo.microservice@gmail.com","Demo de envio", EmailUtil.buildHtmlInvoice(invoiceShoppingCart), Optional.of(pdfFile));
+        mailSenderService.sendHtmlMailAsync("noreply.demo.microservice@gmail.com","Demo de envio", EmailUtil.buildHtmlInvoice(invoiceShoppingCartDto), Optional.of(pdfFile));
     }
 
 

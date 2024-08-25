@@ -1,10 +1,10 @@
 package com.shoppingcart.notification.invoice.generator;
 
-import com.shoppingcart.notification.invoice.dto.GeneratedFile;
-import com.shoppingcart.notification.invoice.dto.InvoiceShoppingCart;
+import com.shoppingcart.notification.invoice.dto.GeneratedFileDto;
+import com.shoppingcart.notification.invoice.dto.InvoiceShoppingCartDto;
 
 public interface InvoiceGenerator {
 
-    GeneratedFile generate(InvoiceShoppingCart invoiceShoppingCart);
+    GeneratedFileDto generate(InvoiceShoppingCartDto invoiceShoppingCartDto);
 
 }

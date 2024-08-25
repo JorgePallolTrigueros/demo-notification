@@ -6,9 +6,9 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
-import com.shoppingcart.notification.invoice.dto.GeneratedFile;
-import com.shoppingcart.notification.invoice.dto.InvoiceShoppingCart;
-import com.shoppingcart.notification.invoice.dto.Product;
+import com.shoppingcart.notification.invoice.dto.GeneratedFileDto;
+import com.shoppingcart.notification.invoice.dto.InvoiceShoppingCartDto;
+import com.shoppingcart.notification.invoice.dto.ProductDto;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayInputStream;
@@ -23,7 +23,7 @@ public class InvoicePdfGenerator implements InvoiceGenerator {
 
 
     @Override
-    public GeneratedFile generate(InvoiceShoppingCart invoice) {
+    public GeneratedFileDto generate(InvoiceShoppingCartDto invoice) {
         try {
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
             PdfWriter writer = new PdfWriter(byteArrayOutputStream);
@@ -55,14 +55,14 @@ public class InvoicePdfGenerator implements InvoiceGenerator {
             table.addHeaderCell("Subtotal");
             table.addHeaderCell("Categoría");
 
-            List<Product> products = invoice.getProducts();
-            for (Product product : products) {
-                table.addCell(product.getId().toString());
-                table.addCell(product.getName());
-                table.addCell(product.getQuantity().toString());
-                table.addCell(product.getPrice().toString());
-                table.addCell(product.getSubtotal().toString());
-                table.addCell(product.getCategory());
+            List<ProductDto> productDtos = invoice.getProductDtos();
+            for (ProductDto productDto : productDtos) {
+                table.addCell(productDto.getId().toString());
+                table.addCell(productDto.getName());
+                table.addCell(productDto.getQuantity().toString());
+                table.addCell(productDto.getPrice().toString());
+                table.addCell(productDto.getSubtotal().toString());
+                table.addCell(productDto.getCategory());
             }
 
             // Añadir tabla al documento
@@ -80,7 +80,7 @@ public class InvoicePdfGenerator implements InvoiceGenerator {
             // Cerrar el documento
             document.close();
 
-            return GeneratedFile
+            return GeneratedFileDto
                     .builder()
                     .name("FACTURA_"+invoice.getId()+new SimpleDateFormat("MM_dd_yyyy_HH_mm").format(new Date())+".pdf")
                     .type("PDF")

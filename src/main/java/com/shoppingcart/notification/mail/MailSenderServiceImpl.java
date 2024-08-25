@@ -1,21 +1,17 @@
 package com.shoppingcart.notification.mail;
 
-import com.shoppingcart.notification.invoice.dto.GeneratedFile;
-import jakarta.activation.DataHandler;
+import com.shoppingcart.notification.invoice.dto.GeneratedFileDto;
 import jakarta.mail.MessagingException;
-import jakarta.mail.internet.MimeBodyPart;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.mail.util.ByteArrayDataSource;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.core.io.InputStreamResource;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
 import java.util.Optional;
 
 @Slf4j
@@ -42,7 +38,7 @@ public class MailSenderServiceImpl implements MailSenderService {
     }
 
     @Override
-    public void sendHtmlMailAsync(String destination, String title, String content, Optional<GeneratedFile> generatedFile) {
+    public void sendHtmlMailAsync(String destination, String title, String content, Optional<GeneratedFileDto> generatedFile) {
         final MimeMessage mimeMessage = mailSender.createMimeMessage();
 
         try {

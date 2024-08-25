@@ -8,7 +8,7 @@ import java.util.Date;
 
 @Data
 @Builder
-public class GeneratedFile {
+public class GeneratedFileDto {
 
     private String name;
     private String type;

@@ -1,10 +1,10 @@
 package com.shoppingcart.notification.util;
 
-import com.shoppingcart.notification.invoice.dto.InvoiceShoppingCart;
-import com.shoppingcart.notification.invoice.dto.Product;
+import com.shoppingcart.notification.invoice.dto.InvoiceShoppingCartDto;
+import com.shoppingcart.notification.invoice.dto.ProductDto;
 
 public class EmailUtil {
-    public static String buildHtmlInvoice(final InvoiceShoppingCart invoice) {
+    public static String buildHtmlInvoice(final InvoiceShoppingCartDto invoice) {
         StringBuilder html = new StringBuilder();
         html.append("<!DOCTYPE html>");
         html.append("<html lang='en'>");
@@ -43,15 +43,15 @@ public class EmailUtil {
         html.append("<h2 style='color: #007BFF; margin-top: 20px;'>Products</h2>");
         html.append("<table class='products'>");
         html.append("<tr><th>ID</th><th>Name</th><th>Category</th><th>Description</th><th>Quantity</th><th>Price</th><th>Subtotal</th></tr>");
-        for (Product product : invoice.getProducts()) {
+        for (ProductDto productDto : invoice.getProductDtos()) {
             html.append("<tr>");
-            html.append("<td>").append(product.getId()).append("</td>");
-            html.append("<td>").append(product.getName()).append("</td>");
-            html.append("<td>").append(product.getCategory()).append("</td>");
-            html.append("<td>").append(product.getDescription()).append("</td>");
-            html.append("<td>").append(product.getQuantity()).append("</td>");
-            html.append("<td>").append(product.getPrice()).append("</td>");
-            html.append("<td>").append(product.getSubtotal()).append("</td>");
+            html.append("<td>").append(productDto.getId()).append("</td>");
+            html.append("<td>").append(productDto.getName()).append("</td>");
+            html.append("<td>").append(productDto.getCategory()).append("</td>");
+            html.append("<td>").append(productDto.getDescription()).append("</td>");
+            html.append("<td>").append(productDto.getQuantity()).append("</td>");
+            html.append("<td>").append(productDto.getPrice()).append("</td>");
+            html.append("<td>").append(productDto.getSubtotal()).append("</td>");
             html.append("</tr>");
         }
         html.append("</table>");

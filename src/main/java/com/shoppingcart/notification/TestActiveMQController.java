@@ -1,7 +1,7 @@
 package com.shoppingcart.notification;
 
-import com.shoppingcart.notification.invoice.dto.InvoiceShoppingCart;
-import com.shoppingcart.notification.invoice.dto.Product;
+import com.shoppingcart.notification.invoice.dto.InvoiceShoppingCartDto;
+import com.shoppingcart.notification.invoice.dto.ProductDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jms.core.JmsTemplate;
@@ -26,7 +26,7 @@ public class TestActiveMQController {
 
     @GetMapping("/")
     public void test(){
-        InvoiceShoppingCart data = InvoiceShoppingCart
+        InvoiceShoppingCartDto data = InvoiceShoppingCartDto
                 .builder()
                 .id("0-000000-1")
                 .businessName("empresa s.a.")
@@ -36,9 +36,9 @@ public class TestActiveMQController {
                 .totalTax(BigDecimal.valueOf(2.1))
                 .subtotal(BigDecimal.valueOf(10))
                 .total(BigDecimal.valueOf(12.1))
-                .products(List.of(
-                        Product.builder().id(1L).name("Producto1").price(BigDecimal.TEN).category("Categoria1").quantity(BigDecimal.ONE).description("Producto de calidad 1").galleries(List.of("p1","p2")).build(),
-                        Product.builder().id(1L).name("Producto2").price(BigDecimal.TEN).category("Categoria2").quantity(BigDecimal.ONE).description("Producto de calidad 2").galleries(List.of("p1","p2")).build()
+                .productDtos(List.of(
+                        ProductDto.builder().id(1L).name("Producto1").price(BigDecimal.TEN).category("Categoria1").quantity(BigDecimal.ONE).description("Producto de calidad 1").galleries(List.of("p1","p2")).build(),
+                        ProductDto.builder().id(1L).name("Producto2").price(BigDecimal.TEN).category("Categoria2").quantity(BigDecimal.ONE).description("Producto de calidad 2").galleries(List.of("p1","p2")).build()
                 ))
                 .build();
         jmsTemplate.convertAndSend(destination, data);
