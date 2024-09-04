@@ -2,6 +2,7 @@ package com.shoppingcart.notification.invoice.listener;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.shoppingcart.notification.constant.AppConstant;
 import com.shoppingcart.notification.invoice.dto.GeneratedFileDto;
 import com.shoppingcart.notification.invoice.dto.InvoiceShoppingCartDto;
 import com.shoppingcart.notification.invoice.generator.InvoiceGenerator;
@@ -21,8 +22,6 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class InvoiceShoppingCartListener {
 
-    public static final String TYPE = "_type";
-
     private final ObjectMapper objectMapper;
 
     private final MailSenderService mailSenderService;
@@ -32,12 +31,12 @@ public class InvoiceShoppingCartListener {
     @JmsListener(destination = "demo.queue")
     public void read(final Message jsonMessage) throws JMSException, JsonProcessingException {
 
-        if(!jsonMessage.propertyExists(TYPE)){
-            log.warn("Property : {} is not informed in JMS Message: {}",TYPE,jsonMessage);
+        if(!jsonMessage.propertyExists(AppConstant.TYPE)){
+            log.warn("Property : {} is not informed in JMS Message: {}",AppConstant.TYPE,jsonMessage);
             return;
         }
 
-        String type = jsonMessage.getStringProperty(TYPE);
+        String type = jsonMessage.getStringProperty(AppConstant.TYPE);
 
         if(!type.contains(InvoiceShoppingCartDto.class.getSimpleName())){
             log.warn("Type request: {} is not possible convert to: {}",type, InvoiceShoppingCartDto.class.getSimpleName());
