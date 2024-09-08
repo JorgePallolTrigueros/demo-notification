@@ -36,7 +36,7 @@ public class TestActiveMQController {
                 .totalTax(BigDecimal.valueOf(2.1))
                 .subtotal(BigDecimal.valueOf(10))
                 .total(BigDecimal.valueOf(12.1))
-                .productDtos(List.of(
+                .products(List.of(
                         ProductDto.builder().id(1L).name("Producto1").price(BigDecimal.TEN).category("Categoria1").quantity(BigDecimal.ONE).description("Producto de calidad 1").galleries(List.of("p1","p2")).build(),
                         ProductDto.builder().id(1L).name("Producto2").price(BigDecimal.TEN).category("Categoria2").quantity(BigDecimal.ONE).description("Producto de calidad 2").galleries(List.of("p1","p2")).build()
                 ))

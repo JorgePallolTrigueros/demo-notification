@@ -27,7 +27,7 @@ public class InvoiceShoppingCartDto {
   private BigDecimal totalTax;
   private String taxDescription;
   private BigDecimal tax;
-  private List<ProductDto> productDtos;
+  private List<ProductDto> products;
 
 }
 

@@ -38,7 +38,7 @@ public class InvoiceShoppingCartListener {
 
         String type = jsonMessage.getStringProperty(AppConstant.TYPE);
 
-        if(!type.contains(InvoiceShoppingCartDto.class.getSimpleName())){
+        if(!type.contains("InvoiceShoppingCart")){
             log.warn("Type request: {} is not possible convert to: {}",type, InvoiceShoppingCartDto.class.getSimpleName());
             return;
         }

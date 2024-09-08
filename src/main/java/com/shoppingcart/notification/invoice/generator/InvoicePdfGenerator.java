@@ -55,7 +55,7 @@ public class InvoicePdfGenerator implements InvoiceGenerator {
             table.addHeaderCell("Subtotal");
             table.addHeaderCell("Categoría");
 
-            List<ProductDto> productDtos = invoice.getProductDtos();
+            List<ProductDto> productDtos = invoice.getProducts();
             for (ProductDto productDto : productDtos) {
                 table.addCell(productDto.getId().toString());
                 table.addCell(productDto.getName());
