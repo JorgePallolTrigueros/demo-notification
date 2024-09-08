@@ -24,17 +24,23 @@ public class MailSenderServiceImpl implements MailSenderService {
     @Async
     @Override
     public void sendSimpleMailAsync(String destination, String title, String content) {
-        SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
-        simpleMailMessage.setTo(destination);
-        simpleMailMessage.setFrom("noreply.demo.microservice@gmail.com");
-        simpleMailMessage.setSubject(title);
-        simpleMailMessage.setText(content);
 
-        log.info("Sending email: {}",simpleMailMessage);
+        try {
 
-        mailSender.send(simpleMailMessage);
+            SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
+            simpleMailMessage.setTo(destination);
+            simpleMailMessage.setFrom("noreply.demo.microservice@gmail.com");
+            simpleMailMessage.setSubject(title);
+            simpleMailMessage.setText(content);
 
-        log.info("Mail send  ok");
+            log.info("Sending email: {}", simpleMailMessage);
+
+            mailSender.send(simpleMailMessage);
+
+            log.info("Mail send  ok");
+        }catch (Exception ex){
+            log.error("Ocurrio un error al enviar email",ex);
+        }
     }
 
     @Override
