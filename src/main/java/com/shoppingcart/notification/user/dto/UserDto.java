@@ -15,4 +15,6 @@ public class UserDto {
     private String phoneNumber;
     private String address;
     private Date createdAt;
+    private Date tokenPasswordCreatedAt;
+    private String token;
 }
