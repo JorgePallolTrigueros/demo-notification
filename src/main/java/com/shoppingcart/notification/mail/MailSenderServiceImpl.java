@@ -63,7 +63,7 @@ public class MailSenderServiceImpl implements MailSenderService {
 
             mailSender.send(mimeMessage);
 
-            log.info("Mail sent successfully");
+            log.info("Mail: {} sent successfully", title);
         } catch (MessagingException e) {
             log.error("Failed to send email", e);
         }

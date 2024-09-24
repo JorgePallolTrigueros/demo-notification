@@ -15,6 +15,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.stereotype.Component;
 
+import java.util.Optional;
+
 @Slf4j
 @Component
 @RequiredArgsConstructor
@@ -47,8 +49,34 @@ public class UserListener {
 
 
 
-        mailSenderService.sendSimpleMailAsync(user.getEmail(), "RECUPERACIÓN DE CONTRASEÑA", EmailUtil.buildPasswordResetEmail(user,"https://www.w3.org/TR/2024/WD-change-password-url-20240603/"));
+        mailSenderService.sendHtmlMailAsync(user.getEmail(), "RECUPERACIÓN DE CONTRASEÑA", EmailUtil.buildPasswordResetEmail(user,"http://localhost:8083/reset-password/"+user.getToken()), Optional.empty());
 
+    }
+
+
+
+    @JmsListener(destination = "password-changed-queue")
+    public void readPasswordChanged(final Message jsonMessage) throws JMSException, JsonProcessingException {
+
+        if (!jsonMessage.propertyExists(AppConstant.TYPE)) {
+            log.warn("Property : {} is not informed in JMS Message: {}", AppConstant.TYPE, jsonMessage);
+            return;
+        }
+
+        String type = jsonMessage.getStringProperty(AppConstant.TYPE);
+
+        if(!type.contains(UserDto.class.getSimpleName())){
+            log.warn("Type request: {} is not possible convert to: {}",type, UserDto.class.getSimpleName());
+            return;
+        }
+
+        String request = jsonMessage.getBody(String.class);
+
+        UserDto user = objectMapper.readValue(request, UserDto.class);
+
+        log.info("Class: {}", user);
+
+        mailSenderService.sendHtmlMailAsync(user.getEmail(), "CONTRASEÑA CAMBIADA", EmailUtil.buildPasswordChangeEmail(user),Optional.empty());
     }
 
 

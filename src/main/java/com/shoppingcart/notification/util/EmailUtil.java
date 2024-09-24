@@ -6,6 +6,48 @@ import com.shoppingcart.notification.user.dto.UserDto;
 
 public class EmailUtil {
 
+
+    public static String buildPasswordChangeEmail(final UserDto user) {
+        StringBuilder html = new StringBuilder();
+        html.append("<!DOCTYPE html>");
+        html.append("<html lang='en'>");
+        html.append("<head>");
+        html.append("<meta charset='UTF-8'>");
+        html.append("<meta name='viewport' content='width=device-width, initial-scale=1.0'>");
+        html.append("<title>Password Changed Successfully</title>");
+        html.append("<style>");
+        html.append("body { font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f4f4; }");
+        html.append(".container { width: 80%; margin: 20px auto; background-color: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); }");
+        html.append(".header { text-align: center; padding: 10px 0; border-bottom: 2px solid #007BFF; }");
+        html.append(".header h1 { margin: 0; color: #007BFF; }");
+        html.append(".header p { margin: 0; color: #6c757d; }");
+        html.append(".content { padding: 20px; text-align: center; }");
+        html.append(".content p { margin-bottom: 20px; font-size: 16px; color: #333; }");
+        html.append(".button { display: inline-block; padding: 10px 20px; background-color: #007BFF; color: white; text-decoration: none; border-radius: 5px; }");
+        html.append(".footer { text-align: center; padding: 10px 0; margin-top: 20px; border-top: 2px solid #007BFF; color: #6c757d; }");
+        html.append("</style>");
+        html.append("</head>");
+        html.append("<body>");
+        html.append("<div class='container'>");
+        html.append("<div class='header'>");
+        html.append("<h1>Password Changed Successfully</h1>");
+        html.append("</div>");
+        html.append("<div class='content'>");
+        html.append("<p>Hi ").append(user.getName()).append(",</p>");
+        html.append("<p>Your password has been successfully changed. You can now log in using your new credentials.</p>");
+        html.append("<a href='/login' class='button'>Go to Login</a>");
+        html.append("</div>");
+        html.append("<div class='footer'>");
+        html.append("<p>Email sent to: ").append(user.getEmail()).append("</p>");
+        html.append("<p>If you have any issues, please contact our support team.</p>");
+        html.append("</div>");
+        html.append("</div>");
+        html.append("</body>");
+        html.append("</html>");
+        return html.toString();
+    }
+
+
     public static String buildPasswordResetEmail(final UserDto user, final String url) {
         StringBuilder html = new StringBuilder();
         html.append("<!DOCTYPE html>");
