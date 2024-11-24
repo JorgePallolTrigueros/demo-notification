@@ -1,10 +1,112 @@
 package com.shoppingcart.notification.util;
 
+import com.shoppingcart.notification.campaign.dto.CampaignRequestDto;
 import com.shoppingcart.notification.invoice.dto.InvoiceShoppingCartDto;
 import com.shoppingcart.notification.invoice.dto.ProductDto;
 import com.shoppingcart.notification.user.dto.UserDto;
 
 public class EmailUtil {
+
+
+    public static String buildCampaignEmail(final CampaignRequestDto campaign) {
+        StringBuilder html = new StringBuilder();
+        html.append("<!DOCTYPE html>");
+        html.append("<html lang='en'>");
+        html.append("<head>");
+        html.append("<meta charset='UTF-8'>");
+        html.append("<meta name='viewport' content='width=device-width, initial-scale=1.0'>");
+        html.append("<title>").append(campaign.getName()).append("</title>");
+        html.append("<style>");
+        html.append("body { font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f4f4; }");
+        html.append(".container { width: 80%; margin: 20px auto; background-color: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); }");
+        html.append(".header { text-align: center; padding: 10px 0; border-bottom: 2px solid #FF4500; }");
+        html.append(".header h1 { margin: 0; color: #FF4500; }");
+        html.append(".header p { margin: 0; color: #6c757d; }");
+        html.append(".content { text-align: center; padding: 20px; }");
+        html.append(".content p { font-size: 18px; margin-bottom: 20px; color: #333; line-height: 1.6; }");
+        html.append(".discount { font-size: 24px; color: #FF6347; font-weight: bold; margin: 20px 0; }");
+        html.append(".days-left { font-size: 20px; color: #28a745; margin-bottom: 20px; }");
+        html.append(".cta-button { padding: 15px 30px; background-color: #FF4500; color: #fff; font-size: 18px; text-decoration: none; border-radius: 10px; margin-top: 20px; display: inline-block; }");
+        html.append(".cta-button:hover { background-color: #FF6347; }");
+        html.append(".footer { text-align: center; padding: 10px 0; margin-top: 20px; border-top: 2px solid #FF4500; }");
+        html.append(".footer p { margin: 0; color: #6c757d; }");
+        html.append("</style>");
+        html.append("</head>");
+        html.append("<body>");
+        html.append("<div class='container'>");
+        html.append("<div class='header'>");
+        html.append("<h1>").append(campaign.getName()).append("</h1>");
+        html.append("<p>").append(campaign.getDescription()).append("</p>");
+        html.append("</div>");
+        html.append("<div class='content'>");
+        html.append("<p><strong>¡Gran Oferta Especial!</strong></p>");
+        html.append("<p><span class='discount'>¡Descuento de ").append(campaign.getDiscount()).append("%!</span></p>");
+        html.append("<p class='days-left'>¡Solo por ").append(campaign.getDaysDuration()).append(" días!</p>");
+        html.append("<p>¡No te pierdas esta oportunidad única! Haz tu compra ahora antes de que se acabe el tiempo.</p>");
+        html.append("<a href='#' class='cta-button'>¡Compra Ahora!</a>");
+        html.append("</div>");
+        html.append("<div class='footer'>");
+        html.append("<p>Esta campaña es válida para todos los productos y usuarios registrados.</p>");
+        html.append("<p>Si tienes alguna duda, no dudes en contactarnos.</p>");
+        html.append("<p>¡Gracias por ser parte de nuestra comunidad!</p>");
+        html.append("</div>");
+        html.append("</div>");
+        html.append("</body>");
+        html.append("</html>");
+        return html.toString();
+    }
+
+
+    public static String buildLowStockNotificationEmail(final com.shoppingcart.notification.product.dto.ProductDto product) {
+        StringBuilder html = new StringBuilder();
+        html.append("<!DOCTYPE html>");
+        html.append("<html lang='en'>");
+        html.append("<head>");
+        html.append("<meta charset='UTF-8'>");
+        html.append("<meta name='viewport' content='width=device-width, initial-scale=1.0'>");
+        html.append("<title>Low Stock Notification</title>");
+        html.append("<style>");
+        html.append("body { font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f4f4; }");
+        html.append(".container { width: 80%; margin: 20px auto; background-color: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); }");
+        html.append(".header { text-align: center; padding: 10px 0; border-bottom: 2px solid #FF6347; }");
+        html.append(".header h1 { margin: 0; color: #FF6347; }");
+        html.append(".content { padding: 20px; text-align: center; }");
+        html.append(".content p { margin-bottom: 20px; font-size: 16px; color: #333; }");
+        html.append(".footer { text-align: center; padding: 10px 0; margin-top: 20px; border-top: 2px solid #FF6347; color: #6c757d; }");
+        html.append(".product-details { text-align: left; margin: 20px 0; }");
+        html.append(".product-details img { max-width: 100%; height: auto; border-radius: 10px; margin-bottom: 10px; }");
+        html.append(".product-details p { font-size: 14px; color: #555; }");
+        html.append("</style>");
+        html.append("</head>");
+        html.append("<body>");
+        html.append("<div class='container'>");
+        html.append("<div class='header'>");
+        html.append("<h1>Low Stock Alert</h1>");
+        html.append("</div>");
+        html.append("<div class='content'>");
+        html.append("<p>Dear Manager,</p>");
+        html.append("<p>The following product has low stock in inventory:</p>");
+        html.append("<div class='product-details'>");
+        if (product.getGalleries() != null && !product.getGalleries().isEmpty()) {
+            html.append("<img src='" + product.getGalleries().get(0).getUrl() + "' alt='Product Image'>");
+        }
+        html.append("<p><strong>Product Name:</strong> ").append(product.getName()).append("</p>");
+        html.append("<p><strong>Description:</strong> ").append(product.getDescription()).append("</p>");
+        html.append("<p><strong>Price:</strong> $").append(product.getPrice()).append("</p>");
+        html.append("<p><strong>Category:</strong> ").append(product.getCategory()).append("</p>");
+        html.append("<p><strong>Current Stock:</strong> ").append(product.getQuantity()).append("</p>");
+        html.append("<p><strong>Date & Time:</strong> ").append(java.time.LocalDateTime.now()).append("</p>");
+        html.append("</div>");
+        html.append("</div>");
+        html.append("<div class='footer'>");
+        html.append("<p>Please take action to restock the item as soon as possible.</p>");
+        html.append("<p>If you have any questions, please contact the inventory team.</p>");
+        html.append("</div>");
+        html.append("</div>");
+        html.append("</body>");
+        html.append("</html>");
+        return html.toString();
+    }
 
 
     public static String buildPasswordChangeEmail(final UserDto user) {
