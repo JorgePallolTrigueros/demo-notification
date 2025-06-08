@@ -1,10 +1,22 @@
 package com.shoppingcart.notification.util;
 
 import com.shoppingcart.notification.campaign.dto.CampaignRequestDto;
+import com.shoppingcart.notification.dao.entity.ProductEntity;
 import com.shoppingcart.notification.invoice.dto.InvoiceShoppingCartDto;
 import com.shoppingcart.notification.invoice.dto.ProductDto;
 import com.shoppingcart.notification.user.dto.UserDto;
+import lombok.extern.slf4j.Slf4j;
 
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.net.URL;
+import java.util.Base64;
+
+@Slf4j
 public class EmailUtil {
 
 
@@ -30,6 +42,10 @@ public class EmailUtil {
         html.append(".cta-button:hover { background-color: #FF6347; }");
         html.append(".footer { text-align: center; padding: 10px 0; margin-top: 20px; border-top: 2px solid #FF4500; }");
         html.append(".footer p { margin: 0; color: #6c757d; }");
+        html.append(".table { width: 100%; border-collapse: collapse; margin-top: 20px; }");
+        html.append(".table th, .table td { padding: 10px; text-align: left; border: 1px solid #ddd; }");
+        html.append(".table th { background-color: #FF6347; color: white; }");
+        html.append(".old-price { text-decoration: line-through; color: #999; }");
         html.append("</style>");
         html.append("</head>");
         html.append("<body>");
@@ -40,10 +56,52 @@ public class EmailUtil {
         html.append("</div>");
         html.append("<div class='content'>");
         html.append("<p><strong>¡Gran Oferta Especial!</strong></p>");
-        html.append("<p><span class='discount'>¡Descuento de ").append(campaign.getDiscount()).append("%!</span></p>");
+        html.append("<p><span class='discount'>¡Descuento de ").append(campaign.getDiscount()*100).append("%!</span></p>");
         html.append("<p class='days-left'>¡Solo por ").append(campaign.getDaysDuration()).append(" días!</p>");
         html.append("<p>¡No te pierdas esta oportunidad única! Haz tu compra ahora antes de que se acabe el tiempo.</p>");
         html.append("<a href='#' class='cta-button'>¡Compra Ahora!</a>");
+
+        // Si la lista productEntityList tiene productos, mostramos esos productos con descuento
+        if (!campaign.getProductEntityList().isEmpty()) {
+            html.append("<h2>Productos con descuento</h2>");
+            html.append("<table class='table'>");
+            html.append("<thead><tr><th>Producto</th><th>Descripción</th><th>Precio Original</th><th>Precio con Descuento</th></tr></thead>");
+            html.append("<tbody>");
+            for (ProductEntity product : campaign.getProductEntityList()) {
+                html.append("<tr>");
+                html.append("<td>").append(product.getName()).append("</td>");
+                html.append("<td>").append(product.getDescription()).append("</td>");
+                html.append("<td><span class='old-price'>$").append(product.getOldPrice()).append("</span></td>");
+                html.append("<td>$").append(String.format("%.2f", product.getPrice())).append("</td>");
+                html.append("</tr>");
+            }
+            html.append("</tbody>");
+            html.append("</table>");
+        } else {
+            // Si no hay productos específicos, aplicamos el descuento a todos
+            html.append("<p><strong>Descuento aplicado a todos los productos:</strong></p>");
+            html.append("<table class='table'>");
+            html.append("<thead><tr><th>Producto</th><th>Descripción</th><th>Precio Original</th><th>Precio con Descuento</th></tr></thead>");
+            html.append("<tbody>");
+            // Aquí puedes agregar todos los productos disponibles en la tienda
+            // Por ahora, solo mostramos ejemplos
+            for (int i = 1; i <= 5; i++) {  // Ejemplo de productos
+                String productName = "Producto " + i;
+                String productDescription = "Descripción del producto " + i;
+                double originalPrice = 100.00 + i * 10;  // Precio original ficticio
+                double discountPrice = originalPrice * (1 - campaign.getDiscount() / 100);
+
+                html.append("<tr>");
+                html.append("<td>").append(productName).append("</td>");
+                html.append("<td>").append(productDescription).append("</td>");
+                html.append("<td><span class='old-price'>$").append(originalPrice).append("</span></td>");
+                html.append("<td>$").append(String.format("%.2f", discountPrice)).append("</td>");
+                html.append("</tr>");
+            }
+            html.append("</tbody>");
+            html.append("</table>");
+        }
+
         html.append("</div>");
         html.append("<div class='footer'>");
         html.append("<p>Esta campaña es válida para todos los productos y usuarios registrados.</p>");
@@ -55,6 +113,7 @@ public class EmailUtil {
         html.append("</html>");
         return html.toString();
     }
+
 
 
     public static String buildLowStockNotificationEmail(final com.shoppingcart.notification.product.dto.ProductDto product) {
@@ -88,7 +147,9 @@ public class EmailUtil {
         html.append("<p>The following product has low stock in inventory:</p>");
         html.append("<div class='product-details'>");
         if (product.getGalleries() != null && !product.getGalleries().isEmpty()) {
-            html.append("<img src='" + product.getGalleries().get(0).getUrl() + "' alt='Product Image'>");
+            html.append("<img src='cid:imagen1' alt='Product Image'>");
+        } else {
+            html.append("<p>Imagen no disponible</p>");
         }
         html.append("<p><strong>Product Name:</strong> ").append(product.getName()).append("</p>");
         html.append("<p><strong>Description:</strong> ").append(product.getDescription()).append("</p>");
@@ -253,5 +314,67 @@ public class EmailUtil {
         return html.toString();
     }
 
+
+
+    public static String imageToBase64(String imageUrl, int width, int height) {
+        try (InputStream in = new URL(imageUrl).openStream()) {
+            // Lee la imagen original
+            BufferedImage originalImage = ImageIO.read(in);
+            if (originalImage == null) {
+                System.out.println("No se pudo leer la imagen desde la URL: " + imageUrl);
+                return null;
+            }
+
+            // Redimensiona la imagen
+            BufferedImage resizedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+            Graphics2D g = resizedImage.createGraphics();
+            g.drawImage(originalImage, 0, 0, width, height, null);
+            g.dispose();
+
+            // Convierte a Base64
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            ImageIO.write(resizedImage, "jpg", baos);  // Usa "jpg" para menos peso
+            byte[] bytes = baos.toByteArray();
+            String base64 = Base64.getEncoder().encodeToString(bytes);
+
+            String result = "data:image/jpeg;base64," + base64;
+            log.info("Resultado de comprimir imagen: "+result);
+            return result;
+        } catch (Exception e) {
+            log.error("No se pudo comprimir imagen");
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static InputStream getResizedImageInputStream(String imageUrl, int width, int height) {
+        try (InputStream in = new URL(imageUrl).openStream()) {
+            // Lee la imagen original
+            BufferedImage originalImage = ImageIO.read(in);
+            if (originalImage == null) {
+                System.out.println("No se pudo leer la imagen desde la URL: " + imageUrl);
+                return null;
+            }
+
+            // Redimensiona la imagen
+            BufferedImage resizedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+            Graphics2D g = resizedImage.createGraphics();
+            g.drawImage(originalImage, 0, 0, width, height, null);
+            g.dispose();
+
+            // Convierte a bytes
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            ImageIO.write(resizedImage, "jpg", baos);  // Usa "jpg" para menos peso
+            byte[] bytes = baos.toByteArray();
+
+            // Devuelve el InputStream
+            return new ByteArrayInputStream(bytes);
+
+        } catch (Exception e) {
+            System.out.println("No se pudo redimensionar la imagen: " + e.getMessage());
+            e.printStackTrace();
+            return null;
+        }
+    }
 
 }

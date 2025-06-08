@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Data
@@ -26,9 +27,11 @@ public class ProductDto {
 
     private String category;
 
+    private Date createdAt;
 
     private BigDecimal quantity;
 
+    @Builder.Default
     private List<GalleryDto> galleries = new ArrayList<>();
 }
 

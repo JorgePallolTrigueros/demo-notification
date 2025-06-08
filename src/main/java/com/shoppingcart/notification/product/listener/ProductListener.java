@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shoppingcart.notification.constant.AppConstant;
 import com.shoppingcart.notification.mail.MailSenderService;
+import com.shoppingcart.notification.product.dto.GalleryDto;
 import com.shoppingcart.notification.product.dto.ProductDto;
 import com.shoppingcart.notification.user.dto.UserDto;
 import com.shoppingcart.notification.util.EmailUtil;
@@ -37,7 +38,7 @@ public class ProductListener {
         String type = jsonMessage.getStringProperty(AppConstant.TYPE);
 
         if(!type.contains(ProductDto.class.getSimpleName())){
-            log.warn("Type request: {} is not possible convert to: {}",type, UserDto.class.getSimpleName());
+            log.warn("Type request: {} is not possible convert to: {}",type, ProductDto.class.getSimpleName());
             return;
         }
 
@@ -48,7 +49,7 @@ public class ProductListener {
         log.info("Class: {}", productDto);
 
 
-        mailSenderService.sendHtmlMailAsync("jorgepallol1@gmail.com", "PRODUCTO: "+productDto.getName()+" CON POCO INVENTARIO", EmailUtil.buildLowStockNotificationEmail(productDto), Optional.empty());
+        mailSenderService.sendHtmlMailAsync("jorgepallol1@gmail.com", "PRODUCTO: "+productDto.getName()+" CON POCO INVENTARIO", EmailUtil.buildLowStockNotificationEmail(productDto), Optional.empty(),Optional.ofNullable(EmailUtil.getResizedImageInputStream(productDto.getGalleries().stream().map(GalleryDto::getUrl).findFirst().orElse("NO_IMAGEN"),100,100)));
     }
 
 

@@ -27,6 +27,9 @@ public class ProductEntity {
     @PositiveOrZero
     private BigDecimal quantity;
 
+    @Column(name = "old_price")
+    private Double oldPrice;
+
     @ManyToOne(optional = false)
     @JoinColumn(name="category_id", nullable=false, updatable=false)
     private CategoryEntity categoryEntity;
