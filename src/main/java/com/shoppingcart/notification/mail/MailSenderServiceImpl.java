@@ -43,6 +43,7 @@ public class MailSenderServiceImpl implements MailSenderService {
         }
     }
 
+    @Async
     @Override
     public void sendHtmlMailAsync(String destination, String title, String content, Optional<GeneratedFileDto> generatedFile) {
         final MimeMessage mimeMessage = mailSender.createMimeMessage();

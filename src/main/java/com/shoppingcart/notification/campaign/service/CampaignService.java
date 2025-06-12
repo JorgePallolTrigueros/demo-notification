@@ -28,17 +28,6 @@ public class CampaignService {
         final long users = userRepository.count();
         log.info("Creando campaign: {} para todos los usuarios: {}",requestDto,users);
 
-        if(requestDto.getUsers()==null ||  requestDto.getUsers().isEmpty())
-        userRepository.findAll().forEach(
-                userEntity -> {
-                    mailSenderService.sendHtmlMailAsync(userEntity.getEmail(),
-                            requestDto.getName(),
-                            EmailUtil.buildCampaignEmail(requestDto),
-                            Optional.empty());
-                }
-        );
-
-
         //si hay descuento que aplicar entramos a la condicion
         if(requestDto.getDiscount()!=null && requestDto.getDiscount()>0){
             //miro que productos se veran afectados, si no ha seleccionado ninguno entonces se aplica a todos
@@ -56,11 +45,28 @@ public class CampaignService {
             }else{
                 //else solo a ciertos productos
                 final List<ProductEntity> products = productRepository.findAllById(requestDto.getProducts());
+
                 products.forEach(productEntity -> {
+                    productEntity.setOldPrice(productEntity.getPrice());
                     productEntity.setPrice(productEntity.getPrice() - (productEntity.getPrice() * requestDto.getDiscount())  );
                 });
+
+                requestDto.setProductEntityList(products);
+
+                productRepository.saveAll(products);
             }
         }
+
+
+        if(requestDto.getUsers()==null ||  requestDto.getUsers().isEmpty())
+            userRepository.findAll().forEach(
+                    userEntity -> {
+                        mailSenderService.sendHtmlMailAsync(userEntity.getEmail(),
+                                requestDto.getName(),
+                                EmailUtil.buildCampaignEmail(requestDto),
+                                Optional.empty());
+                    }
+            );
 
         return CampaignResponseDto
                 .builder()
