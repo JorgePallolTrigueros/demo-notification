@@ -18,6 +18,7 @@ import java.util.List;
 public class InvoiceShoppingCartDto {
 
   private String id;
+  private String email;
   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
   private OffsetDateTime datetime;
   private String businessId;

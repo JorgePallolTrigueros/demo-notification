@@ -51,7 +51,7 @@ public class InvoiceShoppingCartListener {
 
         final GeneratedFileDto pdfFile = invoicePdfGenerator.generate(invoiceShoppingCartDto);
 
-        mailSenderService.sendHtmlMailAsync("noreply.demo.microservice@gmail.com","Demo de envio", EmailUtil.buildHtmlInvoice(invoiceShoppingCartDto), Optional.of(pdfFile));
+        mailSenderService.sendHtmlMailAsync(invoiceShoppingCartDto.getEmail(),"Demo de envio", EmailUtil.buildHtmlInvoice(invoiceShoppingCartDto), Optional.of(pdfFile));
     }
 
 
