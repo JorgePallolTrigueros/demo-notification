@@ -15,12 +15,13 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Base64;
+import java.util.List;
 
 @Slf4j
 public class EmailUtil {
 
 
-    public static String buildCampaignEmail(final CampaignRequestDto campaign) {
+    public static String buildCampaignEmail(final CampaignRequestDto campaign,final List<ProductEntity> products) {
         StringBuilder html = new StringBuilder();
         html.append("<!DOCTYPE html>");
         html.append("<html lang='en'>");
@@ -56,18 +57,23 @@ public class EmailUtil {
         html.append("</div>");
         html.append("<div class='content'>");
         html.append("<p><strong>¡Gran Oferta Especial!</strong></p>");
-        html.append("<p><span class='discount'>¡Descuento de ").append(campaign.getDiscount()*100).append("%!</span></p>");
+        html.append("<p><span class='discount'>¡Descuento de ").append(
+                String.valueOf(campaign.getDiscount()*100)
+                        .concat("%")
+                        .replace(".",",")
+                        .replaceAll(",0%","%")
+        ).append("!</span></p>");
         html.append("<p class='days-left'>¡Solo por ").append(campaign.getDaysDuration()).append(" días!</p>");
         html.append("<p>¡No te pierdas esta oportunidad única! Haz tu compra ahora antes de que se acabe el tiempo.</p>");
         html.append("<a href='#' class='cta-button'>¡Compra Ahora!</a>");
 
         // Si la lista productEntityList tiene productos, mostramos esos productos con descuento
-        if (!campaign.getProductEntityList().isEmpty()) {
+        if (!products.isEmpty()) {
             html.append("<h2>Productos con descuento</h2>");
             html.append("<table class='table'>");
             html.append("<thead><tr><th>Producto</th><th>Descripción</th><th>Precio Original</th><th>Precio con Descuento</th></tr></thead>");
             html.append("<tbody>");
-            for (ProductEntity product : campaign.getProductEntityList()) {
+            for (ProductEntity product :products) {
                 html.append("<tr>");
                 html.append("<td>").append(product.getName()).append("</td>");
                 html.append("<td>").append(product.getDescription()).append("</td>");
