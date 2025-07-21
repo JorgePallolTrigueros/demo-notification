@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/v1/notification")
 @RequiredArgsConstructor
@@ -18,6 +20,11 @@ public class NotificationController {
     @PostMapping("/campaign")
     public ResponseEntity<CampaignResponseDto> createCampaign(@RequestBody CampaignRequestDto requestDto){
         return ResponseEntity.ok(campaignService.createCampaign(requestDto));
+    }
+
+    @GetMapping("/campaign")
+    public ResponseEntity<List<CampaignResponseDto>> createCampaign(@PathVariable(required = false) Boolean oldCampaigns){
+        return ResponseEntity.ok(campaignService.getAllCampaigns(oldCampaigns));
     }
 
 

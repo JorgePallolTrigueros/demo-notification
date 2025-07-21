@@ -46,4 +46,18 @@ public class ProductEntity {
         galleries.forEach(g->g.setProductEntity(this));
         this.galleries = galleries;
     }
+
+    @Override
+    public String toString() {
+        return "ProductEntity{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", price=" + price +
+                ", quantity=" + quantity +
+                ", oldPrice=" + oldPrice +
+                ", categoryEntity=" + (categoryEntity!=null?categoryEntity.getId():"null") +
+                ", galleries=" + (galleries!=null ? galleries.size():"0")+
+                '}';
+    }
 }

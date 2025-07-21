@@ -2,8 +2,10 @@ package com.shoppingcart.notification.campaign.service;
 
 import com.shoppingcart.notification.campaign.dto.CampaignRequestDto;
 import com.shoppingcart.notification.campaign.dto.CampaignResponseDto;
+import com.shoppingcart.notification.dao.entity.CampaignEntity;
 import com.shoppingcart.notification.dao.entity.ProductEntity;
 import com.shoppingcart.notification.dao.entity.UserEntity;
+import com.shoppingcart.notification.dao.repository.CampaignRepository;
 import com.shoppingcart.notification.dao.repository.ProductRepository;
 import com.shoppingcart.notification.dao.repository.UserRepository;
 import com.shoppingcart.notification.mail.MailSenderService;
@@ -13,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -26,6 +29,7 @@ public class CampaignService {
     private final ProductRepository productRepository;
     private final UserRepository userRepository;
     private final MailSenderService mailSenderService;
+    private final CampaignRepository campaignRepository;
 
     public CampaignResponseDto createCampaign(CampaignRequestDto requestDto){
 
@@ -45,7 +49,8 @@ public class CampaignService {
                 //                = 100 - (100 * 0.05)
                 //                = 100  - 5
                 //      descuento = 95
-                productEntity.setPrice(productEntity.getPrice() - (productEntity.getPrice() * requestDto.getDiscount())  );
+                productEntity.setOldPrice(productEntity.getPrice());// el precio viejo es el precio actual sin calculos
+                productEntity.setPrice(productEntity.getPrice() - (productEntity.getPrice() * requestDto.getDiscount()) );// el precio actual se calcula mediante la formula de descuento
             });
             productRepository.saveAll(products);
         } else {
@@ -84,6 +89,23 @@ public class CampaignService {
         response.setDiscount(requestDto.getDiscount());
         response.setDaysDuration(requestDto.getDaysDuration());
 
+        CampaignEntity campaignEntity = new CampaignEntity(
+                response.getName(),
+                response.getDescription(),
+                BigDecimal.valueOf(response.getDiscount()),
+                        response.getDaysDuration(),
+                true
+                );
+        campaignEntity.setUsers(userToSendEmails);
+        campaignEntity.setProducts(products);
+
+        log.info("Guardando campaignEntity: {}" ,campaignEntity);
+
+        campaignEntity = campaignRepository.saveAndFlush(campaignEntity);
+
+
+        log.info("Guardado campaignEntity: {}" ,campaignEntity);
+
         return response;
     }
 
@@ -113,4 +135,39 @@ public class CampaignService {
         return userToSendEmails;
     }
 
+    public List<CampaignResponseDto> getAllCampaigns(Boolean oldCampaigns) {
+        if(oldCampaigns==null){
+            oldCampaigns = true;
+        }
+
+        if(oldCampaigns){
+            return campaignRepository.findAll().stream().map(
+                    campaignEntity -> {
+                        CampaignResponseDto response = new CampaignResponseDto();
+                        response.setName(campaignEntity.getName());
+                        response.setDescription(campaignEntity.getDescription());
+                        response.setDiscount(campaignEntity.getDiscount().doubleValue());
+                        response.setDaysDuration(campaignEntity.getDaysDuration());
+                        response.setUsers(campaignEntity.getUsers().stream().map(UserEntity::getEmail).toList());
+                        response.setProducts( campaignEntity.getProducts().stream().map(ProductEntity::getId).toList() );
+
+                        return response;
+                    }
+            ).toList();
+        }
+
+        return campaignRepository.findAllEnabledCampaigns(oldCampaigns).stream().map(
+                campaignEntity -> {
+                    CampaignResponseDto response = new CampaignResponseDto();
+                    response.setName(campaignEntity.getName());
+                    response.setDescription(campaignEntity.getDescription());
+                    response.setDiscount(campaignEntity.getDiscount().doubleValue());
+                    response.setDaysDuration(campaignEntity.getDaysDuration());
+                    response.setUsers(campaignEntity.getUsers().stream().map(UserEntity::getEmail).toList());
+                    response.setProducts( campaignEntity.getProducts().stream().map(ProductEntity::getId).toList() );
+
+                    return response;
+                }
+        ).toList();
+    }
 }

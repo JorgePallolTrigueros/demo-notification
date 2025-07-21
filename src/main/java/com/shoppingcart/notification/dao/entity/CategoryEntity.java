@@ -29,4 +29,13 @@ public class CategoryEntity {
     public CategoryEntity(String id) {
         this.id = id;
     }
+
+    @Override
+    public String toString() {
+        return "CategoryEntity{" +
+                "id='" + id + '\'' +
+                ", description='" + description + '\'' +
+                ", products=" + products.size() +
+                '}';
+    }
 }
