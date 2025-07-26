@@ -14,7 +14,7 @@ public interface CampaignRepository extends JpaRepository<CampaignEntity,Long > 
     @Query("SELECT c FROM CampaignEntity c WHERE c.enabled = :enabled")
     List<CampaignEntity> findAllEnabledCampaigns(final boolean enabled);
 
-    @Query("SELECT c FROM CampaignEntity c JOIN c.users u WHERE u.id = :userId")
+    @Query("SELECT c FROM CampaignEntity c JOIN c.users u WHERE u.id = :userId AND c.enabled = true")
     List<CampaignEntity> findByUserId(@Param("userId") String userId);
 
 }
