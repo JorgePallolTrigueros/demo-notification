@@ -142,32 +142,31 @@ public class CampaignService {
 
         if(oldCampaigns){
             return campaignRepository.findAll().stream().map(
-                    campaignEntity -> {
-                        CampaignResponseDto response = new CampaignResponseDto();
-                        response.setName(campaignEntity.getName());
-                        response.setDescription(campaignEntity.getDescription());
-                        response.setDiscount(campaignEntity.getDiscount().doubleValue());
-                        response.setDaysDuration(campaignEntity.getDaysDuration());
-                        response.setUsers(campaignEntity.getUsers().stream().map(UserEntity::getEmail).toList());
-                        response.setProducts( campaignEntity.getProducts().stream().map(ProductEntity::getId).toList() );
-
-                        return response;
-                    }
+                    CampaignService::mapCampaignEntity2Dto
             ).toList();
         }
 
         return campaignRepository.findAllEnabledCampaigns(oldCampaigns).stream().map(
-                campaignEntity -> {
-                    CampaignResponseDto response = new CampaignResponseDto();
-                    response.setName(campaignEntity.getName());
-                    response.setDescription(campaignEntity.getDescription());
-                    response.setDiscount(campaignEntity.getDiscount().doubleValue());
-                    response.setDaysDuration(campaignEntity.getDaysDuration());
-                    response.setUsers(campaignEntity.getUsers().stream().map(UserEntity::getEmail).toList());
-                    response.setProducts( campaignEntity.getProducts().stream().map(ProductEntity::getId).toList() );
-
-                    return response;
-                }
+                CampaignService::mapCampaignEntity2Dto
         ).toList();
+    }
+
+    private static CampaignResponseDto mapCampaignEntity2Dto(CampaignEntity campaignEntity) {
+        CampaignResponseDto response = new CampaignResponseDto();
+        response.setName(campaignEntity.getName());
+        response.setDescription(campaignEntity.getDescription());
+        response.setDiscount(campaignEntity.getDiscount().doubleValue());
+        response.setDaysDuration(campaignEntity.getDaysDuration());
+        response.setUsers(campaignEntity.getUsers().stream().map(UserEntity::getEmail).toList());
+        response.setProducts( campaignEntity.getProducts().stream().map(ProductEntity::getId).toList() );
+        return response;
+    }
+
+    public List<CampaignResponseDto> getCampaignByUserId(String userId) {
+        return campaignRepository
+                .findByUserId(userId)
+                .stream()
+                .map(CampaignService::mapCampaignEntity2Dto)// operador :: , es el operador de resolucion de ambitos que me permite acceder a los metodos de la clase referenciada y pasar los argumentos
+                .toList();
     }
 }

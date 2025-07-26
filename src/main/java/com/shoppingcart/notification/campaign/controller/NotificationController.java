@@ -23,8 +23,13 @@ public class NotificationController {
     }
 
     @GetMapping("/campaign")
-    public ResponseEntity<List<CampaignResponseDto>> createCampaign(@PathVariable(required = false) Boolean oldCampaigns){
+    public ResponseEntity<List<CampaignResponseDto>> getAllCampaign(@PathVariable(required = false) Boolean oldCampaigns){
         return ResponseEntity.ok(campaignService.getAllCampaigns(oldCampaigns));
+    }
+
+    @GetMapping("/campaign/{userId}")
+    public ResponseEntity<List<CampaignResponseDto>> getCampaignByUserId(@PathVariable(required = true) String userId){
+        return ResponseEntity.ok(campaignService.getCampaignByUserId(userId));
     }
 
 
