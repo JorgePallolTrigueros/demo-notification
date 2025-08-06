@@ -49,8 +49,8 @@ public class CampaignService {
                 //                = 100 - (100 * 0.05)
                 //                = 100  - 5
                 //      descuento = 95
-                productEntity.setOldPrice(productEntity.getPrice());// el precio viejo es el precio actual sin calculos
-                productEntity.setPrice(productEntity.getPrice() - (productEntity.getPrice() * requestDto.getDiscount()) );// el precio actual se calcula mediante la formula de descuento
+                //productEntity.setOldPrice(productEntity.getPrice());// el precio viejo es el precio actual sin calculos
+                //productEntity.setPrice(productEntity.getPrice() - (productEntity.getPrice() * requestDto.getDiscount()) );// el precio actual se calcula mediante la formula de descuento
             });
             productRepository.saveAll(products);
         } else {
