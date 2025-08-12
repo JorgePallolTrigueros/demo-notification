@@ -3,6 +3,7 @@
 
 package com.shoppingcart.notification.dao.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
@@ -21,6 +22,7 @@ public class CategoryEntity {
     @NotEmpty
     private String description;
     @OneToMany(cascade = CascadeType.ALL,mappedBy = "categoryEntity")
+    @JsonIgnore
     private List<ProductEntity> products=new ArrayList<>();
 
     public CategoryEntity() {

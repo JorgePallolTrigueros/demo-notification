@@ -1,5 +1,6 @@
 package com.shoppingcart.notification.dao.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
@@ -16,6 +17,7 @@ public class GalleryEntity {
     private String url;
     @ManyToOne(optional = false)
     @JoinColumn(name="product_id", nullable=false, updatable=false)
+    @JsonIgnore
     private ProductEntity productEntity;
 
     public void setProductEntityById(Long id){
