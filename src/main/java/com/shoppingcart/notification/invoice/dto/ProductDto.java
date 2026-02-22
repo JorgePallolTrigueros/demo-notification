@@ -19,6 +19,7 @@ public class ProductDto {
   private String description;
   private List<String> galleries;
   private BigDecimal price;
+  private BigDecimal originalPrice;
   private BigDecimal subtotal;
 }
 
