@@ -14,6 +14,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.net.URL;
+import java.time.format.DateTimeFormatter;
 import java.util.Base64;
 import java.util.List;
 
@@ -260,14 +261,21 @@ public class EmailUtil {
 
 
 
+// Asegúrate de importar la clase de tu fecha (ej. java.time.LocalDateTime) si no lo tienes.
+
     public static String buildHtmlInvoice(final InvoiceShoppingCartDto invoice) {
         StringBuilder html = new StringBuilder();
+
+        // Formateador para la fecha (puedes ajustar el patrón "dd/MM/yyyy HH:mm" a tu gusto)
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+        String formattedDate = invoice.getDatetime() != null ? invoice.getDatetime().format(dateFormatter) : "Fecha no disponible";
+
         html.append("<!DOCTYPE html>");
-        html.append("<html lang='en'>");
+        html.append("<html lang='es'>"); // Cambiado a 'es'
         html.append("<head>");
         html.append("<meta charset='UTF-8'>");
         html.append("<meta name='viewport' content='width=device-width, initial-scale=1.0'>");
-        html.append("<title>Invoice</title>");
+        html.append("<title>Factura</title>");
         html.append("<style>");
         html.append("body { font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f4f4; }");
         html.append(".container { width: 80%; margin: 20px auto; background-color: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); }");
@@ -286,19 +294,23 @@ public class EmailUtil {
         html.append("<body>");
         html.append("<div class='container'>");
         html.append("<div class='header'>");
-        html.append("<h1>Invoice</h1>");
-        html.append("<p>Invoice ID: ").append(invoice.getId()).append("</p>");
+        html.append("<h1>Factura</h1>");
+        html.append("<p>ID de Factura: ").append(invoice.getId()).append("</p>");
         html.append("</div>");
         html.append("<table class='invoice-details'>");
-        html.append("<tr><td>Business Name:</td><td>").append(invoice.getBusinessName()).append("</td></tr>");
-        html.append("<tr><td>Date:</td><td>").append(invoice.getDatetime()).append("</td></tr>");
-        html.append("<tr><td>Subtotal:</td><td>").append(invoice.getSubtotal()).append("</td></tr>");
-        html.append("<tr><td>Total Tax:</td><td>").append(invoice.getTotalTax()).append(" (").append(invoice.getTaxDescription()).append(")</td></tr>");
-        html.append("<tr><td>Total:</td><td>").append(invoice.getTotal()).append("</td></tr>");
+        html.append("<tr><td>Empresa:</td><td>").append(invoice.getBusinessName()).append("</td></tr>");
+        html.append("<tr><td>Fecha:</td><td>").append(formattedDate).append("</td></tr>");
+
+        // Aplicando formato de 2 decimales a los totales de la factura
+        html.append("<tr><td>Subtotal:</td><td>").append(String.format("%.2f", invoice.getSubtotal())).append("</td></tr>");
+        html.append("<tr><td>Impuestos:</td><td>").append(String.format("%.2f", invoice.getTotalTax())).append(" (").append(invoice.getTaxDescription()).append(")</td></tr>");
+        html.append("<tr><td>Total:</td><td>").append(String.format("%.2f", invoice.getTotal())).append("</td></tr>");
         html.append("</table>");
-        html.append("<h2 style='color: #007BFF; margin-top: 20px;'>Products</h2>");
+
+        html.append("<h2 style='color: #007BFF; margin-top: 20px;'>Productos</h2>");
         html.append("<table class='products'>");
-        html.append("<tr><th>ID</th><th>Name</th><th>Category</th><th>Description</th><th>Quantity</th><th>Price</th><th>Subtotal</th></tr>");
+        html.append("<tr><th>ID</th><th>Nombre</th><th>Categoría</th><th>Descripción</th><th>Cantidad</th><th>Precio</th><th>Subtotal</th></tr>");
+
         for (ProductDto productDto : invoice.getProducts()) {
             html.append("<tr>");
             html.append("<td>").append(productDto.getId()).append("</td>");
@@ -306,17 +318,20 @@ public class EmailUtil {
             html.append("<td>").append(productDto.getCategory()).append("</td>");
             html.append("<td>").append(productDto.getDescription()).append("</td>");
             html.append("<td>").append(productDto.getQuantity()).append("</td>");
-            html.append("<td>").append(productDto.getPrice()).append("</td>");
-            html.append("<td>").append(productDto.getSubtotal()).append("</td>");
+
+            // Aplicando formato de 2 decimales a los precios de los productos
+            html.append("<td>").append(String.format("%.2f", productDto.getPrice())).append("</td>");
+            html.append("<td>").append(String.format("%.2f", productDto.getSubtotal())).append("</td>");
             html.append("</tr>");
         }
         html.append("</table>");
         html.append("<div class='footer'>");
-        html.append("<p>Thank you for your business!</p>");
+        html.append("<p>¡Gracias por su compra!</p>");
         html.append("</div>");
         html.append("</div>");
         html.append("</body>");
         html.append("</html>");
+
         return html.toString();
     }
 
